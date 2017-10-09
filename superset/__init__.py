@@ -19,6 +19,7 @@ from werkzeug.contrib.fixers import ProxyFix
 
 from superset.connectors.connector_registry import ConnectorRegistry
 from superset import utils, config  # noqa
+from superset.custom.eic_session import EicSupersetSecureSessionInterface
 
 
 APP_DIR = os.path.dirname(__file__)
