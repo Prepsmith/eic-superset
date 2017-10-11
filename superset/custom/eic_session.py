@@ -17,7 +17,7 @@ class EicSupersetSecureSessionInterface(SecureCookieSessionInterface):
         self.permanent = False
 
     def __call__(self, environ, start_response):
-        self.open_session(environ, start_response)
+        # self.open_session(environ, start_response)
         return self.app(environ, start_response)
 
     """Prevent creating session from API requests."""

@@ -47,7 +47,7 @@ SUPERSET_WORKERS = 4
 SUPERSET_WEBSERVER_PORT = 4400
 SUPERSET_WEBSERVER_ADDRESS = '0.0.0.0'
 SUPERSET_WEBSERVER_TIMEOUT = 120
-CUSTOM_SECURITY_MANAGER = EicSupersetSecurityManager
+# CUSTOM_SECURITY_MANAGER = EicSupersetSecureSessionInterface
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # ---------------------------------------------------------
@@ -62,7 +62,7 @@ SQLALCHEMY_DATABASE_URI = 'postgresql://eic_admin@localhost/eic_superset_develop
 QUERY_SEARCH_LIMIT = 1000
 
 # Flask-WTF flag for CSRF
-WTF_CSRF_ENABLED = True
+WTF_CSRF_ENABLED = False
 
 # Whether to run the web server in debug mode or not
 DEBUG = False
@@ -197,7 +197,7 @@ DEFAULT_MODULE_DS_MAP = OrderedDict([
     ('superset.connectors.druid.models', ['DruidDatasource']),
 ])
 ADDITIONAL_MODULE_DS_MAP = {}
-ADDITIONAL_MIDDLEWARE = [EicSupersetSecureSessionInterface, ]
+# ADDITIONAL_MIDDLEWARE = [EicSupersetSecureSessionInterface, ]
 
 """
 1) http://docs.python-guide.org/en/latest/writing/logging/

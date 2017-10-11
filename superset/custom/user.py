@@ -4,6 +4,7 @@ This is the main user class
 from flask_appbuilder.security.sqla.models import User
 from flask_appbuilder.security.views import UserDBModelView
 from flask.ext.babel import lazy_gettext
+from pdb import set_trace as bp
 
 
 class MyUser(User):
