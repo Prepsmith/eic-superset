@@ -9,8 +9,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import imp
-import sys
 from collections import OrderedDict
 
 from dateutil import tz
@@ -18,24 +16,12 @@ from superset.custom.eic_session import EicSupersetSecureSessionInterface
 from superset.custom.eic_security_manager import EicSupersetSecurityManager
 from flask_appbuilder.security.manager import AUTH_DB
 
-import os
-
 from superset.stats_logger import DummyStatsLogger
 
 # Realtime stats logger, a StatsD implementation exists
 STATS_LOGGER = DummyStatsLogger()
 
 # logging.basicConfig(filename='loutre.log', level=logging.DEBUG)
-
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-BASE_DIR = os.path.join(BASE_DIR, 'superset')
-
-if 'SUPERSET_HOME' in os.environ:
-    DATA_DIR = os.environ['SUPERSET_HOME']
-else:
-    DATA_DIR = 'superset'
-if not os.path.exists(DATA_DIR):
-    os.makedirs(DATA_DIR)
 
 #---------------------------------------------------------
 # Superset specific config
@@ -45,17 +31,16 @@ VIZ_ROW_LIMIT = 10000
 SUPERSET_WORKERS = 4
 
 SUPERSET_WEBSERVER_PORT = 4400
-SUPERSET_WEBSERVER_ADDRESS = '0.0.0.0'
+SUPERSET_WEBSERVER_ADDRESS = '127.0.0.1'
 SUPERSET_WEBSERVER_TIMEOUT = 120
-# CUSTOM_SECURITY_MANAGER = EicSupersetSecureSessionInterface
+CUSTOM_SECURITY_MANAGER = EicSupersetSecurityManager
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # ---------------------------------------------------------
-
 # Your App secret key
-SECRET_KEY = 'une loutre n apprecie pas vraiment l eau'  # noqa
+SECRET_KEY = 'a5prfkLThjqdaKtUKUBmwWPHQZ6PgJZ3'  # noqa
 
-# The SQLAlchemy connection string.
+# # The SQLAlchemy connection string.
 SQLALCHEMY_DATABASE_URI = 'postgresql://eic_admin@localhost/eic_superset_develop'
 
 # The limit of queries fetched for query search
@@ -79,10 +64,10 @@ ENABLE_PROXY_FIX = False
 # ------------------------------
 # Uncomment to setup Your App name
 APP_NAME = "EIC Education Data report Generator"
-
-SESSION_COOKIE_NAME = 'eic.staging.session'
-SESSION_COOKIE_SECURE = False
-SESSION_COOKIE_DOMAIN = 'staging.prepsmith.com'
+#
+# SESSION_COOKIE_NAME = 'eic.staging.session'
+# SESSION_COOKIE_SECURE = False
+# SESSION_COOKIE_DOMAIN = 'staging.prepsmith.com'
 
 # Uncomment to setup an App icon
 APP_ICON = "/static/assets/images/superset-logo@2x.png"
@@ -251,9 +236,9 @@ class CeleryConfig(object):
   CELERY_ACKS_LATE = True
 CELERY_CONFIG = CeleryConfig
 """
-CELERY_CONFIG = None
-SQL_CELERY_DB_FILE_PATH = os.path.join(DATA_DIR, 'celerydb.sqlite')
-SQL_CELERY_RESULTS_DB_FILE_PATH = os.path.join(DATA_DIR, 'celery_results.sqlite')
+# CELERY_CONFIG = None
+# SQL_CELERY_DB_FILE_PATH = os.path.join(DATA_DIR, 'celerydb.sqlite')
+# SQL_CELERY_RESULTS_DB_FILE_PATH = os.path.join(DATA_DIR, 'celery_results.sqlite')
 
 # static http headers to be served by your Superset server.
 # The following example prevents iFrame from other domains
@@ -289,8 +274,6 @@ JINJA_CONTEXT_ADDONS = {}
 # by humans.
 ROBOT_PERMISSION_ROLES = ['Public', 'Gamma', 'Alpha', 'Admin', 'sql_lab']
 
-CONFIG_PATH_ENV_VAR = BASE_DIR
-
 
 # smtp server configuration
 EMAIL_NOTIFICATIONS = False  # all the emails are sent using dryrun
@@ -319,24 +302,3 @@ BLUEPRINTS = []
 # URL. This is used to translate internal Hadoop job tracker URL
 # into a proxied one
 TRACKING_URL_TRANSFORMER = lambda x: x
-
-try:
-    if CONFIG_PATH_ENV_VAR in os.environ:
-        # Explicitly import config module that is not in pythonpath; useful
-        # for case where app is being executed via pex.
-        print('Loaded your LOCAL configuration at [{}]'.format(
-            os.environ[CONFIG_PATH_ENV_VAR]))
-        module = sys.modules[__name__]
-        override_conf = imp.load_source('superset_config', os.environ[CONFIG_PATH_ENV_VAR])
-        for key in dir(override_conf):
-            if key.isupper():
-                setattr(module, key, getattr(override_conf, key))
-
-    else:
-        from superset_config import *  # noqa
-        import superset_config
-        print('Loaded your LOCAL configuration at [{}]'.format(
-            superset_config.__file__))
-except ImportError:
-    pass
-

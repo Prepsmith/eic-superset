@@ -2,9 +2,17 @@
 This is the main user class
 """
 from flask_appbuilder.security.sqla.models import User
+from flask import redirect
 from flask_appbuilder.security.views import UserDBModelView
-from flask.ext.babel import lazy_gettext
-from pdb import set_trace as bp
+from flask_appbuilder.actions import action
+
+
+class MyUserDBModelView(UserDBModelView):
+    @action("muldelete", "Delete", "Delete all Really?", "fa-rocket", single=False)
+    def muldelete(self, items):
+        self.datamodel.delete_all(items)
+        self.update_redirect()
+        return redirect(self.get_redirect())
 
 
 class MyUser(User):
@@ -13,6 +21,7 @@ class MyUser(User):
     fields = private_fields + public_fields
 
     def __init__(self, params):
+        bp()
         super(MyUser, self).__init__()
         self._read_fields_from(params)
 
@@ -44,31 +53,31 @@ class MyUser(User):
             else:
                 destination.update({field: field})
 
-
-class MyUserDBModelView(UserDBModelView):
-    """
-        View that add DB specifics to User view.
-        Override to implement your own custom view.
-        Then override userdbmodelview property on SecurityManager
-    """
-
-    show_fieldsets = [
-        (lazy_gettext('User info'),
-         {'fields': ['username', 'active', 'roles', 'login_count']}),
-        (lazy_gettext('Personal Info'),
-         {'fields': ['first_name', 'last_name', 'email'], 'expanded': True}),
-        (lazy_gettext('Audit Info'),
-         {'fields': ['last_login', 'fail_login_count', 'created_on',
-                     'created_by', 'changed_on', 'changed_by'], 'expanded': False}),
-    ]
-
-    user_show_fieldsets = [
-        (lazy_gettext('User info'),
-         {'fields': ['username', 'active', 'roles', 'login_count']}),
-        (lazy_gettext('Personal Info'),
-         {'fields': ['first_name', 'last_name', 'email'], 'expanded': True}),
-    ]
-
-    add_columns = ['first_name', 'last_name', 'username', 'active', 'email', 'roles', 'password', 'conf_password']
-    list_columns = ['first_name', 'last_name', 'username', 'email', 'active', 'roles']
-    edit_columns = ['first_name', 'last_name', 'username', 'active', 'email', 'roles']
+#
+# class MyUserDBModelView(UserDBModelView):
+#     """
+#         View that add DB specifics to User view.
+#         Override to implement your own custom view.
+#         Then override userdbmodelview property on SecurityManager
+#     """
+#
+#     show_fieldsets = [
+#         (lazy_gettext('User info'),
+#          {'fields': ['username', 'active', 'roles', 'login_count']}),
+#         (lazy_gettext('Personal Info'),
+#          {'fields': ['first_name', 'last_name', 'email'], 'expanded': True}),
+#         (lazy_gettext('Audit Info'),
+#          {'fields': ['last_login', 'fail_login_count', 'created_on',
+#                      'created_by', 'changed_on', 'changed_by'], 'expanded': False}),
+#     ]
+#
+#     user_show_fieldsets = [
+#         (lazy_gettext('User info'),
+#          {'fields': ['username', 'active', 'roles', 'login_count']}),
+#         (lazy_gettext('Personal Info'),
+#          {'fields': ['first_name', 'last_name', 'email'], 'expanded': True}),
+#     ]
+#
+#     add_columns = ['first_name', 'last_name', 'username', 'active', 'email', 'roles', 'password', 'conf_password']
+#     list_columns = ['first_name', 'last_name', 'username', 'email', 'active', 'roles']
+#     edit_columns = ['first_name', 'last_name', 'username', 'active', 'email', 'roles']
